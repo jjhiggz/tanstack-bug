@@ -10,7 +10,6 @@ import * as React from "react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 
 import { NotFound } from "~/components/NotFound";
-
 import appCss from "~/styles/app.css?url";
 import { seo } from "../utils/seo";
 
@@ -79,6 +78,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Meta />
       </head>
       <body>
+        <header className="bg-gray-800 p-4 text-white">
+          <nav className="flex gap-6 mx-auto container">
+            <Link to="/" className="hover:text-gray-300 transition">
+              Home
+            </Link>
+            <Link to="/customers" className="hover:text-gray-300 transition">
+              Customers
+            </Link>
+            <Link to="/dogs" className="hover:text-gray-300 transition">
+              Dogs
+            </Link>
+          </nav>
+        </header>
         {children}
         <ScrollRestoration />
         <TanStackRouterDevtools position="bottom-right" />

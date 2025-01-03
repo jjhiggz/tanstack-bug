@@ -1,10 +1,13 @@
 Stuff to Do
 
-- [ ] `/`
-  - [ ] Has Header
-  - [ ] Links to `/customers`
-  - [ ] Links to `/dogs`
-- [ ] `/customers`
+- Use node 23
+
+- [x] `/`
+  - [x] Has Header
+  - [x] Links to `/customers`
+  - [x] Links to `/dogs`
+  - [x] Has big button links too
+- [x] `/customers`
   - [ ] search by name
   - `/customers/$id`
     - [ ] displays data for customer

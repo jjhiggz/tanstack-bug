@@ -11,37 +11,99 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as DogsImport } from './routes/dogs'
+import { Route as CustomersImport } from './routes/customers'
+import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const DogsRoute = DogsImport.update({
+  id: '/dogs',
+  path: '/dogs',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CustomersRoute = CustomersImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const IndexRoute = IndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {}
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/customers': {
+      id: '/customers'
+      path: '/customers'
+      fullPath: '/customers'
+      preLoaderRoute: typeof CustomersImport
+      parentRoute: typeof rootRoute
+    }
+    '/dogs': {
+      id: '/dogs'
+      path: '/dogs'
+      fullPath: '/dogs'
+      preLoaderRoute: typeof DogsImport
+      parentRoute: typeof rootRoute
+    }
+  }
 }
 
 // Create and export the route tree
 
-export interface FileRoutesByFullPath {}
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/customers': typeof CustomersRoute
+  '/dogs': typeof DogsRoute
+}
 
-export interface FileRoutesByTo {}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/customers': typeof CustomersRoute
+  '/dogs': typeof DogsRoute
+}
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/customers': typeof CustomersRoute
+  '/dogs': typeof DogsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: never
+  fullPaths: '/' | '/customers' | '/dogs'
   fileRoutesByTo: FileRoutesByTo
-  to: never
-  id: '__root__'
+  to: '/' | '/customers' | '/dogs'
+  id: '__root__' | '/' | '/customers' | '/dogs'
   fileRoutesById: FileRoutesById
 }
 
-export interface RootRouteChildren {}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  CustomersRoute: typeof CustomersRoute
+  DogsRoute: typeof DogsRoute
+}
 
-const rootRouteChildren: RootRouteChildren = {}
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  CustomersRoute: CustomersRoute,
+  DogsRoute: DogsRoute,
+}
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
@@ -52,7 +114,20 @@ export const routeTree = rootRoute
   "routes": {
     "__root__": {
       "filePath": "__root.tsx",
-      "children": []
+      "children": [
+        "/",
+        "/customers",
+        "/dogs"
+      ]
+    },
+    "/": {
+      "filePath": "index.tsx"
+    },
+    "/customers": {
+      "filePath": "customers.tsx"
+    },
+    "/dogs": {
+      "filePath": "dogs.tsx"
     }
   }
 }
