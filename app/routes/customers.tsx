@@ -1,24 +1,44 @@
 import {
   createFileRoute,
+  Link,
+  Outlet,
   useLoaderData,
   useNavigate,
 } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
 import { prisma } from "prisma/db.server";
-import { z } from "vinxi";
-import { ZodSchema } from "zod";
+import { z } from "zod";
+import { validateWithZod } from "~/utils/validate-with-zod";
 
-const $getCustomers = createServerFn().handler(async () => {
-  return await prisma.customer.findMany({
-    take: 5,
+const $getCustomers = createServerFn()
+  .validator(
+    validateWithZod(
+      z.object({
+        searchTerm: z.string().nullable(),
+      })
+    )
+  )
+  .handler(async ({ data: { searchTerm } }) => {
+    if (searchTerm) {
+      return await prisma.customer.findMany({
+        take: 5,
+
+        where: {
+          OR: [
+            {
+              name: {
+                contains: searchTerm,
+              },
+            },
+          ],
+        },
+      });
+    } else {
+      return await prisma.customer.findMany({
+        take: 5,
+      });
+    }
   });
-});
-
-export const validateWithZod =
-  <Schema extends ZodSchema>(schema: Schema) =>
-  (input: any) => {
-    return schema.parse(input) as z.infer<Schema>;
-  };
 
 export const Route = createFileRoute("/customers")({
   validateSearch: (input) =>
@@ -29,8 +49,12 @@ export const Route = createFileRoute("/customers")({
     )(input),
   component: RouteComponent,
   loaderDeps: ({ search }) => search,
-  loader: () => {
-    return $getCustomers();
+  loader: ({ deps: { searchTerm } }) => {
+    return $getCustomers({
+      data: {
+        searchTerm: searchTerm ?? null,
+      },
+    });
   },
 });
 
@@ -46,7 +70,6 @@ const CustomerList = () => {
           type="text"
           placeholder="Search customers by name..."
           onChange={(e) => {
-            alert("hello");
             navigate({
               to: "/customers",
               search: {
@@ -85,7 +108,17 @@ const CustomerList = () => {
           <tbody className="divide-y divide-gray-200">
             {customerList.map((customer) => (
               <tr key={customer.id}>
-                <td className="px-6 py-4 whitespace-nowrap">{customer.name}</td>
+                <Link
+                  to="/customers/$customerId"
+                  params={{
+                    customerId: `${customer.id}`,
+                  }}
+                  className="text-blue-400 underline cursor-pointer"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {customer.name}
+                  </td>
+                </Link>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {customer.email}
                 </td>
@@ -114,6 +147,7 @@ const CustomerList = () => {
           </tbody>
         </table>
       </div>
+      <Outlet />
     </div>
   );
 };
