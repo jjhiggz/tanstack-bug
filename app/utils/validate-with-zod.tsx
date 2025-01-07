@@ -1,7 +1,3 @@
-import { z, ZodSchema } from "zod";
+import { zodValidator } from "@tanstack/zod-adapter";
 
-export const validateWithZod =
-  <Schema extends ZodSchema>(schema: Schema) =>
-  (input: z.input<Schema>) => {
-    return schema.parse(input) as z.infer<Schema>;
-  };
+export const validateWithZod = zodValidator;
