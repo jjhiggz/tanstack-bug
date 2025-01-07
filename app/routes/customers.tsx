@@ -6,17 +6,17 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
+import { zodValidator } from "@tanstack/zod-adapter";
 import { prisma } from "prisma/db.server";
 import { z } from "zod";
-import { validateWithZod } from "~/utils/validate-with-zod";
 
 const $getCustomers = createServerFn()
   .validator(
-    validateWithZod(
-      z.object({
+    zodValidator({
+      schema: z.object({
         searchTerm: z.string().nullable(),
-      })
-    )
+      }),
+    })
   )
   .handler(async ({ data: { searchTerm } }) => {
     if (searchTerm) {
@@ -41,12 +41,11 @@ const $getCustomers = createServerFn()
   });
 
 export const Route = createFileRoute("/customers")({
-  validateSearch: (input) =>
-    validateWithZod(
-      z.object({
-        searchTerm: z.string().optional(),
-      })
-    )(input),
+  validateSearch: zodValidator({
+    schema: z.object({
+      searchTerm: z.string().optional(),
+    }),
+  }),
   component: RouteComponent,
   loaderDeps: ({ search }) => search,
   loader: ({ deps: { searchTerm } }) => {

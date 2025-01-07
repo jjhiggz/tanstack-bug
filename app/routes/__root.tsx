@@ -74,9 +74,6 @@ function RootComponent() {
           <Link to="/customers" className="hover:text-gray-300 transition">
             Customers
           </Link>
-          <Link to="/dogs" className="hover:text-gray-300 transition">
-            Dogs
-          </Link>
         </nav>
       </header>
       <Outlet />

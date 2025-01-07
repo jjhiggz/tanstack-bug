@@ -1,16 +1,16 @@
 import { createFileRoute, Link, useLoaderData } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/start";
+import { zodValidator } from "@tanstack/zod-adapter";
 import { prisma } from "prisma/db.server";
 import { z } from "zod";
-import { validateWithZod } from "~/utils/validate-with-zod";
 
 const $getCustomer = createServerFn()
   .validator(
-    validateWithZod(
-      z.object({
+    zodValidator({
+      schema: z.object({
         id: z.coerce.number(),
-      })
-    )
+      }),
+    })
   )
   .handler(async ({ data }) => {
     return await prisma.customer.findFirst({

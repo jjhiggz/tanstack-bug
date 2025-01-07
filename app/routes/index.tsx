@@ -21,12 +21,6 @@ function RouteComponent() {
       >
         Customers
       </Link>
-      <Link
-        to="/dogs"
-        className="bg-blue-500 hover:bg-blue-600 px-16 py-8 rounded-lg font-bold text-2xl text-white transition"
-      >
-        Dogs
-      </Link>
     </div>
   );
 }
